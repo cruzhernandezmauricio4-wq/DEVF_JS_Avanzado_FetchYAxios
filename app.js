@@ -52,3 +52,20 @@ function obtenerConFetch() {
       dataContainer.innerHTML = `<p>${error.message}</p>`;
     });
 }
+// Función para obtener datos con Axios
+function obtenerConAxios() {
+  // Realizar solicitud HTTP con axios
+  axios.get(API_URL)
+    .then(response => {
+      // Mostrar personajes en la interfaz
+      mostrarPersonajes(response.data.results);
+    })
+    .catch(error => {
+      // Manejo de errores
+      dataContainer.innerHTML = `<p>Error en la solicitud con Axios: ${error.message}</p>`;
+    });
+}
+
+// Asignar eventos a los botones
+fetchBtn.addEventListener("click", obtenerConFetch);
+axiosBtn.addEventListener("click", obtenerConAxios);
