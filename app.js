@@ -1,71 +1,62 @@
-// URL base de la API de Rick & Morty
-const API_URL = "https://rickandmortyapi.com/api/character";
-
 // Referencias a los elementos del DOM
-const fetchBtn = document.getElementById("fetch-btn");
-const axiosBtn = document.getElementById("axios-btn");
-const dataContainer = document.getElementById("data-container");
+const fetchBtn = document.getElementById('fetch-btn');
+const axiosBtn = document.getElementById('axios-btn');
+const dataContainer = document.getElementById('data-container');
 
-// Función para mostrar personajes en el contenedor
-function mostrarPersonajes(personajes) {
+// Función para renderizar personajes en el contenedor
+function renderCharacters(characters) {
   // Limpiar contenido previo
-  dataContainer.innerHTML = "";
-    // Recorrer lista de personajes y crear elementos HTML
-  personajes.forEach(personaje => {
-    const card = document.createElement("div");
-    card.style.border = "1px solid #ccc";
-    card.style.margin = "10px";
-    card.style.padding = "10px";
-    card.style.display = "inline-block";
+  dataContainer.innerHTML = '';
 
-    const nombre = document.createElement("h3");
-    nombre.textContent = personaje.name;
-
-    const imagen = document.createElement("img");
-    imagen.src = personaje.image;
-    imagen.alt = personaje.name;
-    imagen.style.width = "150px";
-
-    card.appendChild(nombre);
-    card.appendChild(imagen);
-    dataContainer.appendChild(card);
+  // Recorrer lista de personajes y crear elementos HTML
+  characters.forEach(character => {
+    const characterElement = document.createElement('div');
+    characterElement.innerHTML = `
+      <h3>${character.name}</h3>
+      <img src="${character.image}" alt="${character.name}">
+    `;
+    dataContainer.appendChild(characterElement);
   });
 }
 
-// Función para obtener datos con Fetch
-function obtenerConFetch() {
+// ---------------------------
+// Implementación con Fetch
+// ---------------------------
+fetchBtn.addEventListener('click', () => {
   // Realizar solicitud HTTP con fetch
-  fetch(API_URL)
+  fetch('https://rickandmortyapi.com/api/character')
     .then(response => {
       // Validar que la respuesta sea correcta
       if (!response.ok) {
-        throw new Error("Error en la solicitud con Fetch");
+        throw new Error('Error en la solicitud con Fetch');
       }
       return response.json();
     })
     .then(data => {
-      // Mostrar personajes en la interfaz
-      mostrarPersonajes(data.results);
+      // Usar la función de renderizado con los resultados
+      renderCharacters(data.results);
     })
     .catch(error => {
       // Manejo de errores
-      dataContainer.innerHTML = `<p>${error.message}</p>`;
+      console.error('Error:', error);
+      dataContainer.textContent = 'Hubo un error al obtener los datos.';
     });
-}
-// Función para obtener datos con Axios
-function obtenerConAxios() {
-  // Realizar solicitud HTTP con axios
-  axios.get(API_URL)
-    .then(response => {
-      // Mostrar personajes en la interfaz
-      mostrarPersonajes(response.data.results);
-    })
-    .catch(error => {
-      // Manejo de errores
-      dataContainer.innerHTML = `<p>Error en la solicitud con Axios: ${error.message}</p>`;
-    });
-}
+});
 
-// Asignar eventos a los botones
-fetchBtn.addEventListener("click", obtenerConFetch);
-axiosBtn.addEventListener("click", obtenerConAxios);
+// ---------------------------
+// Implementación con Axios
+// ---------------------------
+axiosBtn.addEventListener('click', () => {
+  // Realizar solicitud HTTP con axios
+  axios.get('https://rickandmortyapi.com/api/character')
+    .then(response => {
+      // Axios ya convierte la respuesta en JSON automáticamente
+      const data = response.data;
+      renderCharacters(data.results);
+    })
+    .catch(error => {
+      // Manejo de errores
+      console.error('Error:', error);
+      dataContainer.textContent = 'Hubo un error al obtener los datos.';
+    });
+});
